@@ -29,7 +29,6 @@ Node.js · Express · MongoDB · JWT · OpenAI API
 - OpenAI API key
 
 ## Getting Started
-```bash
 git clone https://github.com/arbhajdari/university-regulations-chatbot.git
 cd university-regulations-chatbot
 npm install

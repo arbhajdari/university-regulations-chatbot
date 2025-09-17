@@ -23,6 +23,7 @@ Node.js · Express · MongoDB · JWT · OpenAI API
 ├── public/
 ├── .env.example
 ├── server.js
+├── LICENSE
 └── README.md
 ```
 

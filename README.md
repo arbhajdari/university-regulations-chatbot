@@ -13,6 +13,7 @@ An AI-powered web application that gives students and staff instant answers abou
 Node.js · Express · MongoDB · JWT · OpenAI API
 
 ## Project Structure
+```bash 
 .
 ├── middleware/
 ├── models/
@@ -22,6 +23,7 @@ Node.js · Express · MongoDB · JWT · OpenAI API
 ├── .env.example
 ├── server.js
 └── README.md
+```
 
 ## Requirements
 - Node.js 18+

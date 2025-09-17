@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regulations Chatbot for City College University of York</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Loading Indicator -->
+    <div id="loadingIndicator" class="loading hidden">
+        <div class="spinner"></div>
+        <p>Loading...</p>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <div class="login-header">
+                <h2><i class="fas fa-graduation-cap"></i> City College University of York</h2>
+                <p>Regulations Chatbot</p>
+            </div>
+            <form id="loginForm">
+                <div class="input-group">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="email" placeholder="Your City College Thessaloniki email" required>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" placeholder="Password" required>
+                </div>
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
+                </button>
+                <p class="auth-switch">
+                    Don't have an account? <a href="#" id="showRegister">Register here</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="mainApp" class="hidden">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-left">
+                <h1><i class="fas fa-graduation-cap"></i> Regulations Chatbot</h1>
+                <div class="university-name">City College University of York</div>
+            </div>
+
+            <div class="header-right">
+                <div class="user-info">
+                    <div class="user-name" id="userName">Loading...</div>
+                    <div class="user-email" id="userEmail">Loading...</div>
+                    <div class="user-role" id="userRole">Loading...</div>
+                </div>
+                <button class="icon-btn" id="contactBtn" title="Contact City College">
+                    <i class="fas fa-university"></i>
+                </button>
+                <button class="icon-btn" id="settingsBtn" title="Settings">
+                    <i class="fas fa-cog"></i>
+                </button>
+                <button class="icon-btn" id="logoutBtn" title="Logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Container -->
+        <div class="main-container">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="sidebar-header">
+                    <button class="btn-primary full-width" id="newChatBtn">
+                        <i class="fas fa-plus"></i> New Chat
+                    </button>
+                </div>
+
+                <!-- Quick Lookup -->
+                <div class="quick-lookup">
+                    <h3><i class="fas fa-search"></i> Quick Lookup</h3>
+                    <div class="lookup-categories">
+                        <button class="category-btn" data-category="admission">
+                            <i class="fas fa-user-graduate"></i> 
+                            <span class="category-title">Admission & Requirements</span>
+                            <span class="category-desc">References, English tests, appeals</span>
+                        </button>
+                        <button class="category-btn" data-category="financial">
+                            <i class="fas fa-dollar-sign"></i>
+                            <span class="category-title">Financial Policies</span>
+                            <span class="category-desc">Tuition refunds, compensation</span>
+                        </button>
+                        <button class="category-btn" data-category="academic">
+                            <i class="fas fa-book"></i>
+                            <span class="category-title">Academic Policies</span>
+                            <span class="category-desc">Attendance, exams, conduct</span>
+                        </button>
+                        <button class="category-btn" data-category="support">
+                            <i class="fas fa-hands-helping"></i>
+                            <span class="category-title">Student Support & Safety</span>
+                            <span class="category-desc">Harassment, counseling, support</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Forms Section -->
+                <div class="forms-section">
+                    <h3 onclick="toggleFormsSection()">
+                        <i class="fas fa-file-pdf"></i>
+                        Forms & Documents
+                        <i class="fas fa-chevron-down expand-icon" id="formsExpandIcon"></i>
+                    </h3>
+                    <div class="forms-content" id="formsContent">
+                        <div class="form-item" onclick="openFormsModal()">
+                            <i class="fas fa-file-pdf"></i>
+                            <span>View All Forms</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat History -->
+                <div class="chat-history">
+                    <h3><i class="fas fa-history"></i> Recent Chats</h3>
+                    <div class="chat-list" id="chatList">
+                        <!-- Chat items will be dynamically loaded here -->
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Chat Container -->
+            <main class="chat-container">
+                <!-- Welcome Screen -->
+                <div id="welcomeScreen" class="welcome-screen">
+                    <div class="welcome-content">
+                        <div class="welcome-icon">🎓</div>
+                        <h2>Welcome to the<br>Regulations Chatbot for City College University of York</h2>
+                        <p>I'm here to help you find information about university policies and regulations. You can:</p>
+                        <ul class="feature-list">
+                            <li><i class="fas fa-search"></i> Ask questions about university policies</li>
+                            <li><i class="fas fa-list"></i> Use quick lookup for common topics</li>
+                            <li><i class="fas fa-user-cog"></i> Customize user preferences</li>
+                            <li><i class="fas fa-history"></i> Access your previous conversations</li>
+                        </ul>
+                        <p class="start-prompt">Type a message below to get started!</p>
+                    </div>
+                </div>
+
+                <!-- Chat Messages -->
+                <div id="chatMessages" class="chat-messages hidden">
+                    <!-- Messages will be added here dynamically -->
+                </div>
+
+                <!-- Chat Input -->
+                <div class="chat-input-container">
+                    <div class="input-area">
+                        <button class="icon-btn" id="clearChatBtn" title="Clear Current Chat">
+                            <i class="fas fa-broom"></i>
+                        </button>
+                        <button class="icon-btn" id="deleteChatBtn" title="Delete Current Chat">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                        <input type="text" id="messageInput" placeholder="Ask about university regulations...">
+                        <button class="icon-btn send-btn" id="sendBtn" title="Send Message">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                    <div class="input-hint">Ask me anything about City College University of York policies and regulations</div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- User Guidance Modal -->
+    <div id="guidanceModal" class="modal hidden">
+        <div class="modal-content guidance-modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-lightbulb"></i> Quick Tip</h3>
+                <button class="close-btn" data-modal="guidanceModal">&times;</button>
+            </div>
+            <div class="guidance-content">
+                <div class="guidance-icon">💡</div>
+                <p><strong>For the best results, please try to use direct questions!</strong></p>
+                <div class="guidance-examples">
+                    <p>Good examples:</p>
+                    <ul>
+                        <li>"What are the tuition fee refund rules?"</li>
+                        <li>"How do I report harassment or discrimination?"</li>
+                        <li>"What data does the university collect about students?"</li>
+                        <li>"How many references do I need for Master's programs?"</li>
+                        <li>"What English tests are accepted for admission?"</li>
+                        <li>"How do I appeal an admission decision?"</li>
+                    </ul>
+                </div>
+                <div class="guidance-note">
+                    <p><i class="fas fa-info-circle"></i> Direct questions help me find the most accurate policy information for you!</p>
+                </div>
+                <div class="guidance-buttons">
+                    <button class="btn-primary" id="guidanceOkBtn">Got it!</button>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="dontShowAgain"> Don't show this again
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Forms Modal -->
+    <div id="formsModal" class="modal hidden">
+        <div class="modal-content forms-modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-file-pdf"></i> Application Forms & Documents</h3>
+                <button class="close-btn" data-modal="formsModal">&times;</button>
+            </div>
+            <div class="forms-content">
+                <div class="forms-intro">
+                    <p>Download the required forms for your application and enrollment process:</p>
+                </div>
+                
+                <div class="forms-categories">
+                    <!-- Application Forms -->
+                    <div class="forms-category">
+                        <h4><i class="fas fa-graduation-cap"></i> Application Forms</h4>
+                        <div class="forms-list">
+                            <div class="form-item">
+                                <div class="form-info">
+                                    <span class="form-name">Undergraduate Application Form</span>
+                                    <span class="form-desc">For Bachelor's degree applications</span>
+                                </div>
+                                <button class="download-btn" data-form="undergraduate-application">
+                                    <i class="fas fa-download"></i> Download
+                                </button>
+                            </div>
+                            <div class="form-item">
+                                <div class="form-info">
+                                    <span class="form-name">Postgraduate Application Form</span>
+                                    <span class="form-desc">For Master's degree applications</span>
+                                </div>
+                                <button class="download-btn" data-form="postgraduate-application">
+                                    <i class="fas fa-download"></i> Download
+                                </button>
+                            </div>
+                            <div class="form-item">
+                                <div class="form-info">
+                                    <span class="form-name">MBA Application Form</span>
+                                    <span class="form-desc">For Executive MBA applications</span>
+                                </div>
+                                <button class="download-btn" data-form="mba-application">
+                                    <i class="fas fa-download"></i> Download
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Enrollment & Support Forms -->
+                    <div class="forms-category">
+                        <h4><i class="fas fa-user-check"></i> Enrollment & Support Forms</h4>
+                        <div class="forms-list">
+                            <div class="form-item">
+                                <div class="form-info">
+                                    <span class="form-name">Student Enrollment Statement</span>
+                                    <span class="form-desc">Required for enrollment confirmation</span>
+                                </div>
+                                <button class="download-btn" data-form="enrollment-statement">
+                                    <i class="fas fa-download"></i> Download
+                                </button>
+                            </div>
+                            <div class="form-item">
+                                <div class="form-info">
+                                    <span class="form-name">Equal Opportunities Monitoring Form</span>
+                                    <span class="form-desc">For undergraduate and postgraduate programs</span>
+                                </div>
+                                <button class="download-btn" data-form="equal-opportunities">
+                                    <i class="fas fa-download"></i> Download
+                                </button>
+                            </div>
+                            <div class="form-item">
+                                <div class="form-info">
+                                    <span class="form-name">Equal Opportunities Monitoring Form (MBA)</span>
+                                    <span class="form-desc">Specifically for MBA programs</span>
+                                </div>
+                                <button class="download-btn" data-form="equal-opportunities-mba">
+                                    <i class="fas fa-download"></i> Download
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Appeals & Complaints -->
+                    <div class="forms-category">
+                        <h4><i class="fas fa-balance-scale"></i> Appeals & Complaints</h4>
+                        <div class="forms-list">
+                            <div class="form-item">
+                                <div class="form-info">
+                                    <span class="form-name">Admissions Appeals and Complaints Form</span>
+                                    <span class="form-desc">For formal appeals and complaints regarding admissions</span>
+                                </div>
+                                <button class="download-btn" data-form="appeals-complaints">
+                                    <i class="fas fa-download"></i> Download
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="forms-note">
+                    <p><i class="fas fa-info-circle"></i> <strong>Note:</strong> Please ensure you download and complete the correct forms for your intended program. For assistance, contact the Admissions Office at <a href="mailto:admissions@york.citycollege.eu">admissions@york.citycollege.eu</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal hidden">
+        <div class="modal-content settings-modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-cog"></i> Settings</h3>
+                <button class="close-btn" data-modal="settingsModal">&times;</button>
+            </div>
+            <div class="settings-content">
+                <!-- Appearance Settings -->
+                <div class="settings-section">
+                    <h4><i class="fas fa-palette"></i> Appearance</h4>
+                    <div class="setting-group">
+                        <label for="themeSelect">Theme</label>
+                        <select id="themeSelect">
+                            <option value="light">🌞 Light Mode</option>
+                            <option value="dark">🌙 Dark Mode</option>
+                        </select>
+                    </div>
+                    <div class="setting-group">
+                        <label for="fontSizeSelect">Font Size</label>
+                        <select id="fontSizeSelect">
+                            <option value="small">Small (14px)</option>
+                            <option value="medium">Medium (16px)</option>
+                            <option value="large">Large (18px)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Chat Settings -->
+                <div class="settings-section">
+                    <h4><i class="fas fa-comments"></i> Chat Preferences</h4>
+                    <div class="setting-group">
+                        <label for="autoSaveToggle">Auto-save Conversations</label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="autoSaveToggle" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-group">
+                        <label for="timestampsToggle">Show Message Timestamps</label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="timestampsToggle">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Data Management -->
+                <div class="settings-section">
+                    <h4><i class="fas fa-database"></i> Data Management</h4>
+                    <div class="setting-group">
+                        <button class="btn-secondary" id="exportDataBtn">
+                            <i class="fas fa-download"></i> Export My Data
+                        </button>
+                        <small class="setting-help">Download your chat history and preferences</small>
+                    </div>
+                    <div class="setting-group">
+                        <button class="btn-secondary" id="clearHistoryBtn">
+                            <i class="fas fa-trash"></i> Clear Chat History
+                        </button>
+                        <small class="setting-help">Remove all your saved conversations</small>
+                    </div>
+                </div>
+
+                <!-- About -->
+                <div class="settings-section">
+                    <h4><i class="fas fa-info-circle"></i> About</h4>
+                    <div class="about-info">
+                        <p><strong>City College University of York Regulations Chatbot</strong></p>
+                        <p>© 2024 City College, University of York</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Modal -->
+    <div id="contactModal" class="modal hidden">
+        <div class="modal-content contact-modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-university"></i> Contact City College</h3>
+                <button class="close-btn" data-modal="contactModal">&times;</button>
+            </div>
+            <div class="contact-content">
+                <!-- Main University Information -->
+                <div class="contact-section-main">
+                    <div class="university-info">
+                        <h4><i class="fas fa-graduation-cap"></i> City College, University of York</h4>
+                        <div class="address-info">
+                            <p><i class="fas fa-map-marker-alt"></i> <strong>Address:</strong></p>
+                            <p>24 Proxenou Koromila St.<br>54622 Thessaloniki, Greece</p>
+                            <p>3, Leontos Sofou St.<br>546 26 Thessaloniki, Greece</p>
+                        </div>
+                        <div class="main-contact">
+                            <p><i class="fas fa-phone"></i> <strong>Main Phone:</strong> <a href="tel:+441904717200">+44 (0) 1904 717200</a></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Department Contacts -->
+                <div class="contact-departments">
+                    <h4><i class="fas fa-building"></i> Department Contacts</h4>
+                    <div class="departments-grid">
+                        <div class="department-item">
+                            <div class="department-icon">
+                                <i class="fas fa-user-graduate"></i>
+                            </div>
+                            <div class="department-info">
+                                <h5>Admissions Office</h5>
+                                <p><a href="mailto:admissions@york.citycollege.eu">admissions@york.citycollege.eu</a></p>
+                                <small>Applications, requirements, appeals</small>
+                            </div>
+                        </div>
+
+                        <div class="department-item">
+                            <div class="department-icon">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                            <div class="department-info">
+                                <h5>Financial Department</h5>
+                                <p><a href="mailto:financial@york.citycollege.eu">financial@york.citycollege.eu</a></p>
+                                <small>Tuition fees, refunds, financial aid</small>
+                            </div>
+                        </div>
+
+                        <div class="department-item">
+                            <div class="department-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="department-info">
+                                <h5>Department of Student Services and Alumni</h5>
+                                <p><a href="mailto:tkyriakou@york.citycollege.eu">tkyriakou@york.citycollege.eu</a></p>
+                                <small>Student support, alumni services</small>
+                            </div>
+                        </div>
+
+                        <div class="department-item">
+                            <div class="department-icon">
+                                <i class="fas fa-briefcase"></i>
+                            </div>
+                            <div class="department-info">
+                                <h5>Career, Employability and Enterprise Centre</h5>
+                                <p><a href="mailto:dkiakidis@york.citycollege.eu">dkiakidis@york.citycollege.eu</a></p>
+                                <small>Career guidance, employment support</small>
+                            </div>
+                        </div>
+
+                        <div class="department-item">
+                            <div class="department-icon">
+                                <i class="fas fa-laptop-code"></i>
+                            </div>
+                            <div class="department-info">
+                                <h5>Computer Science Department</h5>
+                                <p>Dr Ioanna Stamatopoulou - Head of Computer Science Department</p>
+                                <p><a href="mailto:istamatopoulou@york.citycollege.eu">istamatopoulou@york.citycollege.eu</a></p>
+                            </div>
+                        </div>
+
+                        <div class="department-item">
+                            <div class="department-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="department-info">
+                                <h5>Business Administration & Economics Department</h5>
+                                <p>Ms Aggeliki Papakonstantinou - Head of Business Administration & Economics Department</p>
+                                <p><a href="mailto:a.papakonstantinou@york.citycollege.eu">a.papakonstantinou@york.citycollege.eu</a></p>
+                            </div>
+                        </div>
+
+                        <div class="department-item">
+                            <div class="department-icon">
+                                <i class="fas fa-brain"></i>
+                            </div>
+                            <div class="department-info">
+                                <h5>Psychology Department</h5>
+                                <p>Dr Suzie Savvidou - Head of Psychology Department</p>
+                                <p><a href="mailto:ssavvidou@york.citycollege.eu">ssavvidou@york.citycollege.eu</a></p>
+                            </div>
+                        </div>
+
+                        <div class="department-item">
+                            <div class="department-icon">
+                                <i class="fas fa-book-open"></i>
+                            </div>
+                            <div class="department-info">
+                                <h5>Humanities Department</h5>
+                                <p>Dr Zoi Tatsioka, FHEA - Head of Humanities Department</p>
+                                <p><a href="mailto:ztatsioka@york.citycollege.eu">ztatsioka@york.citycollege.eu</a></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <!-- Emergency Contact -->
+                <div class="emergency-contact">
+                    <div class="emergency-note">
+                        <p><i class="fas fa-exclamation-triangle"></i> <strong>For urgent matters:</strong> Contact Student Services directly at <strong>+44 (0) 1904 717200</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 

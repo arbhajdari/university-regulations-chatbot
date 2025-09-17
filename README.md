@@ -15,6 +15,7 @@ Node.js · Express · MongoDB · JWT · OpenAI API
 ## Project Structure
 ```bash 
 .
+├── docs/
 ├── middleware/
 ├── models/
 ├── routes/
